@@ -1,11 +1,13 @@
 import urllib.request
 import json
 
-urls = []
+with open('URL_list.txt') as file:
+    urls = file.read().split('\n')
+
 palavra = ''
 
 results = []
-for i in range(len(urls)):
+for i in range(len(urls)-1):
     resp = urllib.request.urlopen(urls[i])
     codigo = resp.code
     data = resp.read()
@@ -16,6 +18,6 @@ for i in range(len(urls)):
     results.append(result)
 
 
-for i in range(len(urls)):
+for i in range(len(results)):
     resp = json.loads(results[i])
     print(resp['encontradas'])
