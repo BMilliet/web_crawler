@@ -12,6 +12,10 @@
 
 import urllib.request
 import json
+from bs4 import BeautifulSoup
+from bs4.element import Comment
+
+
 
 """
     A definição padrão para se diferenciar as URLs é uma quebra de linha,
@@ -29,7 +33,32 @@ def busca_lista(list):
         print('Arquivo de lista não encontrado')
 
     return urls
+    
 
+
+"""Seleciona o conteudo a ser ignorada"""
+
+def valida_tag(element):
+    if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
+        return False
+    if isinstance(element, Comment):
+        return False
+    else:
+        return True
+
+
+
+"""Extrai o conteudo ignorado"""
+
+def limpa_html(body):
+    soup = BeautifulSoup(body, 'html.parser')
+    texts = soup.findAll(text=True)
+    visivel = filter(valida_tag, texts)
+    return u" ".join(t.strip() for t in visivel)
+
+
+
+"""Le o HTML selecionando apenas oque deve ser lido e conta a ocorrencia da palavra"""
 
 def conta_palavra(urls,palavra):
     results = []
@@ -39,7 +68,7 @@ def conta_palavra(urls,palavra):
 
         codigo = resp.code
         data = resp.read()
-        html = data.decode("UTF-8")
+        html = limpa_html(data)
         cont = html.count(palavra)
 
         result = json.dumps({'Url': urls[i], 'codigo': codigo, 'encontradas': cont})
@@ -48,14 +77,21 @@ def conta_palavra(urls,palavra):
     return results
 
 
+
+"""Devolver os resultados obtidos em JSON"""
+
 def apresenta_relatorio(results):
     for i in range(len(results)):
         resp = json.loads(results[i])
         print(resp['encontradas'])
 
+
+
 """Execução do programa"""
 
 urls = busca_lista('URL_list.txt')
+
+
 
 """A palavra buscada é colocada como um input pelo usuario ao executar o programa"""
 
