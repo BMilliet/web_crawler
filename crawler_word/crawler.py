@@ -1,6 +1,6 @@
 
 """
-   Este é um crawler feito em Python3
+   Este é um crawler feito em Python3 utilizando BeautifulSoup.
    Sua funcionalidade se resume a seguir uma lista de URLs,
    em busca de uma palavra definida pelo usuario,
    após a busca exibe um relatório com os resultados.
@@ -33,10 +33,10 @@ def busca_lista(list):
         print('Arquivo de lista não encontrado')
 
     return urls
-    
 
 
-"""Seleciona o conteudo a ser ignorada"""
+
+"""Seleciona o conteudo a ser ignorado"""
 
 def valida_tag(element):
     if element.parent.name in ['style', 'script', 'head', 'title', 'meta', '[document]']:
@@ -71,7 +71,7 @@ def conta_palavra(urls,palavra):
         html = limpa_html(data)
         cont = html.count(palavra)
 
-        result = json.dumps({'Url': urls[i], 'codigo': codigo, 'encontradas': cont})
+        result = json.dumps({'encontradas': cont, 'codigo': codigo, 'Url': urls[i]})
         results.append(result)
 
     return results
@@ -83,7 +83,7 @@ def conta_palavra(urls,palavra):
 def apresenta_relatorio(results):
     for i in range(len(results)):
         resp = json.loads(results[i])
-        print(resp['encontradas'])
+        print(resp)
 
 
 
